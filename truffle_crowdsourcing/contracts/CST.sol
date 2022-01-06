@@ -33,7 +33,8 @@ contract CST {
 	
     function CST() public{
       owner = msg.sender;
-	  SGX = 0x6d1c59cbe0c142e02754b648d8d5e41a84848558;
+	  //SGX = 0x6d1c59cbe0c142e02754b648d8d5e41a84848558;
+        SGX = 0x2fACF1A9A6B73630fD80153280085a1525f44b9E;
     }
 
     function() payable public {
@@ -44,7 +45,7 @@ contract CST {
 
     
     function uploadTask(uint256 hashVerifyCode, uint256 predicate, uint256 encTask, uint64 taskPrice) payable public returns (address) {
-      require(msg.value == taskPrice); 
+      //require(msg.value == taskPrice);
       tmpTask.taskID = msg.sender;
       tmpTask.predicate = predicate;
 	  tmpTask.hashvc = hashVerifyCode;
@@ -57,7 +58,7 @@ contract CST {
     }
 	
 	function uploadPK(address taskID, uint256 publicKey, uint256 encKey) public returns (bool){
-          require(msg.sender == taskID);
+          //require(msg.sender == taskID);
 	  uint256 i;
 	  for(i = 0; i < task.length; i++)
          {
@@ -93,10 +94,14 @@ contract CST {
            
     }
 
-    function executeTask (address taskID, bytes32 hash, uint8 v, bytes32 r, bytes32 s, uint256 encResult) public returns (bool) {
+    //function executeTask (address taskID, bytes32 hash, uint8 v, bytes32 r, bytes32 s, uint256 encResult) public returns (bool) {
+    function executeTask (address taskID, bytes32 hash, uint8 v, bytes32 r, bytes32 s, uint256 encResult) public returns(bool) {
          uint256 i;
          uint256 num;
-		 address recover = ecrecover(hash, v, r, s);
+        bytes memory prefix = "\x19Ethereum Signed Message:\n32";
+        bytes32 prefixedHash = keccak256(prefix, hash);
+		 address recover = ecrecover(prefixedHash, v, r, s);
+
          for(i = 0; i < task.length; i++)
          {
             if(taskID == task[i].taskID)
@@ -106,8 +111,9 @@ contract CST {
 				{
 					task[num].state = true;
 					task[num].encr = encResult;
-					msg.sender.transfer(task[num].reward);
-					_executeTask(msg.sender);
+					//msg.sender.transfer(task[num].reward);
+                    msg.sender.transfer(1);
+                    _executeTask(msg.sender);
 					return true; 
 				}
 			  else
@@ -120,9 +126,7 @@ contract CST {
             {
               return false;
             }
-         }		 
-		 
-                
+         }
          
        }
 

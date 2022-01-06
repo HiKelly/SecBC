@@ -1,4 +1,5 @@
 const CST = artifacts.require('./CST.sol')
+let PC
 contract('CST', function(accounts) 
 { 
     var fromJson = {from : web3.eth.accounts[0]};
@@ -16,14 +17,25 @@ contract('CST', function(accounts)
     var i;
     var j = 0;
 
-    it("Test time of uploadTask...", function() 
-    {
-        var PC = CST.at("0xe411bcf30e358843aa8b5df51493245c81713b25");
+
+    before(async () => {
+        PC = await CST.deployed();
+    })
+
+    it("Test time of uploadTask...", async () => {
+        //var PC = CST.at("0xF1cb1A965EDFb70d152607C5d4Ba92F66A688ea8");
+        //var PC = CST.at("0xe411bcf30e358843aa8b5df51493245c81713b25");
         console.log("============  Initially ===================");
 		
-        return PC.getTmp().then (function ()
-        {
-            timer(PC.uploadTask, 0xd072b812a49f3c6ccbda896118bbca70f018a1934aac6175899970aad6cd6aa2,011001100011,0xf40392bd6a8866ccc46651971b5313a2d3c28f03cf33143ff80c80f955df8ea8, 10000, N);
+        //let id = await  PC.getTmp.call()
+        let a = await PC.uploadTask("0xd072b812a49f3c6ccbda896118bbca70f018a1934aac6175899970aad6cd6aa2",
+                "0x011001100011",
+                "0xf40392bd6a8866ccc46651971b5313a2d3c28f03cf33143ff80c80f955df8ea8",
+                10000,
+            {from:accounts[0]});
+        console.log(a)
+
+        /*    timer(PC.uploadTask, 0xd072b812a49f3c6ccbda896118bbca70f018a1934aac6175899970aad6cd6aa2,011001100011,0xf40392bd6a8866ccc46651971b5313a2d3c28f03cf33143ff80c80f955df8ea8, 10000, N);
 
             function timer(fn, a, b, c, d, total) 
             {
@@ -59,7 +71,7 @@ contract('CST', function(accounts)
     
             }
            
-        });
+        });*/
     });
 
 });

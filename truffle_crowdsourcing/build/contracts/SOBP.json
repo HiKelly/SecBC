@@ -13169,8 +13169,15 @@
       "links": {},
       "address": "0xd95586136160c49ee1e7c446e3974332e1b0fe42",
       "transactionHash": "0x03c67cd164ae8f86676ca5661872fc0e9fa63a96afb94c2a2bf94b31eb4c711f"
+    },
+    "5777": {
+      "events": {},
+      "links": {},
+      "address": "0xE96465C90b2c51A23BcB3afaA31D50bcaD2B3DC7",
+      "transactionHash": "0x7055f52577c236d112e61126c69bda6c35afc7595b7dd016683df18de8116257"
     }
   },
-  "schemaVersion": "2.0.0",
-  "updatedAt": "2018-04-30T04:11:03.877Z"
+  "schemaVersion": "3.4.4",
+  "updatedAt": "2022-01-05T08:17:20.493Z",
+  "networkType": "ethereum"
 }

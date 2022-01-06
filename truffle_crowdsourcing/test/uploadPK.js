@@ -1,4 +1,5 @@
 const CST = artifacts.require('./CST.sol')
+let PC
 contract('CST', function(accounts) 
 { 
     var fromJson = {from : web3.eth.accounts[0]};
@@ -16,12 +17,21 @@ contract('CST', function(accounts)
     var i;
     var j = 0;
 
-    it("Test time of uploadPK...", function() 
-    {
-        var PC = CST.at("0xe411bcf30e358843aa8b5df51493245c81713b25");
+    before(async () => {
+        PC = await CST.deployed();
+    })
+
+    it("Test time of uploadPK...", async () => {
+        //var PC = CST.at("0xe411bcf30e358843aa8b5df51493245c81713b25");
         console.log("============  Initially ===================");
-		
-        return PC.getTmp().then (function ()
+        let id = await  PC.getTmp.call()
+        let a = await PC.uploadPK(id,
+            "0xd072b812a49f3c6ccbda896118bbca70f018a1934aac6175899970aad6cd6aa2",
+            "0xf40392bd6a8866ccc46651971b5313a2d3c28f03cf33143ff80c80f955df8ea8");
+        console.log(a);
+
+
+        /*return PC.getTmp().then (function ()
         {
             timer(PC.uploadPK, "0x78bb4db7484ef49b836d90c37f45ea12a11bccbc", 0xd072b812a49f3c6ccbda896118bbca70f018a1934aac6175899970aad6cd6aa2,0xf40392bd6a8866ccc46651971b5313a2d3c28f03cf33143ff80c80f955df8ea8, N);
 
@@ -59,7 +69,7 @@ contract('CST', function(accounts)
     
             }
            
-        });
+        });*/
     });
 
 });
