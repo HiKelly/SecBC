@@ -3,7 +3,7 @@ pragma solidity ^0.4.23;
 
 contract CST {
 
-    struct CSTask {
+    //struct CSTask {
         address taskID;
         uint256 predicate;
         uint256 hashvc;
@@ -11,13 +11,14 @@ contract CST {
 	uint256 reward;
 	uint256 pkt;
 	uint256 enck; 
-	uint256 encr;
-	bool state;
-    }
+	uint256[] encr;
+    uint256 needNumber;
+	uint256 state;
+    //}
     
-    CSTask [] public task;
-    CSTask [] public tmp;
-    CSTask tmpTask;
+    //CSTask [] public task;
+    //CSTask [] public tmp;
+    //CSTask tmpTask;
     address public SGX;
     uint256 public random;
     
@@ -26,7 +27,7 @@ contract CST {
 
     event _uploadTask(address indexed requester);
 	 event _uploadPK(address indexed requester);
-    event _getTask(address indexed requester);
+    event _getTask();
 	event _executeTask(address indexed requester);
     event _noFind(address indexed requester);
    
@@ -44,23 +45,30 @@ contract CST {
     }
 
     
-    function uploadTask(uint256 hashVerifyCode, uint256 predicate, uint256 encTask, uint64 taskPrice) payable public returns (address) {
+    function uploadTask(uint256 hashVerifyCode, uint256 predicate, uint256 encTask, uint256 needNumber,uint64 taskPrice) payable public returns (address) {
       //require(msg.value == taskPrice);
-      tmpTask.taskID = msg.sender;
-      tmpTask.predicate = predicate;
-	  tmpTask.hashvc = hashVerifyCode;
-	  tmpTask.enct = encTask;
-	  tmpTask.reward = taskPrice;
-	  tmpTask.state = false;
-	  task.push(tmpTask);
+      //tmpTask.taskID = msg.sender;
+        taskID = msg.sender;
+      //tmpTask.predicate = predicate;
+        predicate = predicate;
+	  //tmpTask.hashvc = hashVerifyCode;
+        hashvc = hashVerifyCode;
+	  //tmpTask.enct = encTask;
+        enct = encTask;
+	  //tmpTask.reward = taskPrice;
+        reward = taskPrice;
+	  //tmpTask.state = false;
+        state = 0;
+        needNumber = needNumber;
+	  //task.push(tmpTask);
       _uploadTask(msg.sender);
-      return tmpTask.taskID;
+      //return tmpTask.taskID;
     }
-	
-	function uploadPK(address taskID, uint256 publicKey, uint256 encKey) public returns (bool){
+
+	function uploadPK(uint256 publicKey, uint256 encKey) public{
           //require(msg.sender == taskID);
-	  uint256 i;
-	  for(i = 0; i < task.length; i++)
+	  //uint256 i;
+	  /*for(i = 0; i < task.length; i++)
          {
             if(task[i].taskID == taskID)
             {
@@ -75,62 +83,54 @@ contract CST {
 	      _noFind(msg.sender);
               return false;
             }
-         }
-	  	  
+         }*/
+
+        pkt = publicKey;
+        enck = encKey;
+        _uploadPK(msg.sender);
+
 
 	}
 
-	
-    function getTask(uint256 attribute) public {
-      uint256 i = 0;
+
+    function getTask() public returns(uint256) {
+      /*uint256 i = 0;
 	  while(i < task.length){
 		if(task[i].state == false && task[i].predicate == attribute)
 		{
 			tmp.push(task[i]);
 		}
-	  }      
+	  } */
+        return enct;
 
-      _getTask(msg.sender);
+      _getTask();
            
     }
 
     //function executeTask (address taskID, bytes32 hash, uint8 v, bytes32 r, bytes32 s, uint256 encResult) public returns (bool) {
-    function executeTask (address taskID, bytes32 hash, uint8 v, bytes32 r, bytes32 s, uint256 encResult) public returns(bool) {
-         uint256 i;
-         uint256 num;
+    function executeTask (bytes32 hash, uint8 v, bytes32 r, bytes32 s, uint256 encResult) public returns(bool) {
         bytes memory prefix = "\x19Ethereum Signed Message:\n32";
         bytes32 prefixedHash = keccak256(prefix, hash);
 		 address recover = ecrecover(prefixedHash, v, r, s);
-
-         for(i = 0; i < task.length; i++)
-         {
-            if(taskID == task[i].taskID)
-            {
-              num = i;
-              if(recover == SGX)
-				{
-					task[num].state = true;
-					task[num].encr = encResult;
-					//msg.sender.transfer(task[num].reward);
+        if (state > needNumber) return false;
+        if(recover == SGX) {
+            state = state + 1;
+            state = state - 1;
+        }
+				//{
+					state = state + 1;
+					encr.push(encResult);
+					//msg.sender.transfer(reward / needNumber);
                     msg.sender.transfer(1);
                     _executeTask(msg.sender);
 					return true; 
-				}
-			  else
-				{		
-					task[num].state = false;
-					return false;
-				}         
-            }
-            else
-            {
-              return false;
-            }
-         }
+				//} else {
+                  //return false;
+              //}
          
        }
 
-
+    /*
     function getHC(address taskID) public view returns (uint256){
 	     uint256 i;
          uint256 num;
@@ -149,9 +149,9 @@ contract CST {
 		 
          
     }
-	
-	function getResult(address taskID) public view returns (uint256){
-	     uint256 i;
+	*/
+	function getResult() public view returns (uint256[]){
+	     /*uint256 i;
          uint256 num;
 		 for(i = 0; i < task.length; i++)
          {
@@ -164,11 +164,11 @@ contract CST {
             {
               return 0;
             }
-         }
-		 
+         }*/
+		 return encr;
          
     }
-
+    /*
     function getK(address taskID) public view returns (uint256){
 	     uint256 i;
          uint256 num;
@@ -195,7 +195,7 @@ contract CST {
     {
   	return task.length;
      }
- 
+    */
 
 }
 
